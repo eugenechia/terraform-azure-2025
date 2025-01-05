@@ -20,3 +20,43 @@ resource "azurerm_resource_group" "tf-rg" {
     environment = "dev"
   }
 }
+
+resource "azurerm_virtual_network" "eugene-lab-vnet" {
+  name                = "eugene-lab-vnet"
+  location            = azurerm_resource_group.tf-rg.location
+  resource_group_name = azurerm_resource_group.tf-rg.name
+  address_space       = ["10.0.0.0/16"]
+
+  tags = {
+    environment = "Dev"
+  }
+}
+
+resource "azurerm_subnet" "eugene-lab-subnet" {
+  name                 = "eugene-lab-subnet"
+  resource_group_name  = azurerm_resource_group.tf-rg.name
+  virtual_network_name = azurerm_virtual_network.eugene-lab-vnet.name
+  address_prefixes     = ["10.0.1.0/24"]
+}
+
+resource "azurerm_network_security_group" "eugene-lab-sg" {
+  name                = "acceptanceTestSecurityGroup1"
+  location            = azurerm_resource_group.tf-rg.location
+  resource_group_name = azurerm_resource_group.tf-rg.name
+
+  security_rule {
+    name                       = "test123"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  tags = {
+    environment = "Dev"
+  }
+}
