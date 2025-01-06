@@ -95,3 +95,24 @@ resource "azurerm_network_interface" "eugene-lab-nic" {
     environment = "dev"
   }
 }
+
+resource "azurerm_linux_virtual_machine" "eugene-lab-vm" {
+  name                  = "eugene-vm"
+  resource_group_name   = azurerm_resource_group.tf-rg.name
+  location              = azurerm_resource_group.tf-rg.location
+  size                  = "Standard_B1s"
+  admin_username        = "eugenechia"
+  network_interface_ids = [azurerm_network_interface.eugene-lab-nic.id]
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "18.04-LTS"
+    version   = "latest"
+  }
+}
