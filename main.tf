@@ -62,3 +62,36 @@ resource "azurerm_network_security_rule" "eugene-lab-sg-security-rule" {
   resource_group_name         = azurerm_resource_group.tf-rg.name
   network_security_group_name = azurerm_network_security_group.eugene-lab-sg.name
 }
+
+resource "azurerm_subnet_network_security_group_association" "eugene-lab-sga" {
+  subnet_id                 = azurerm_subnet.eugene-lab-subnet.id
+  network_security_group_id = azurerm_network_security_group.eugene-lab-sg.id
+}
+
+resource "azurerm_public_ip" "eugene-lab-publicip" {
+  name                = "acceptanceTestPublicIp1"
+  resource_group_name = azurerm_resource_group.tf-rg.name
+  location            = azurerm_resource_group.tf-rg.location
+  allocation_method   = "Dynamic"
+
+  tags = {
+    environment = "Development"
+  }
+}
+
+resource "azurerm_network_interface" "eugene-lab-nic" {
+  name                = "eugene-lab-nic"
+  location            = azurerm_resource_group.tf-rg.location
+  resource_group_name = azurerm_resource_group.tf-rg.name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.eugene-lab-subnet.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.eugene-lab-publicip.id
+  }
+
+  tags = {
+    environment = "dev"
+  }
+}
