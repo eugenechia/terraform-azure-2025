@@ -72,7 +72,7 @@ resource "azurerm_public_ip" "eugene-lab-publicip" {
   name                = "acceptanceTestPublicIp1"
   resource_group_name = azurerm_resource_group.tf-rg.name
   location            = azurerm_resource_group.tf-rg.location
-  allocation_method   = "Dynamic"
+  allocation_method   = "Static"
 
   tags = {
     environment = "Development"
@@ -103,6 +103,13 @@ resource "azurerm_linux_virtual_machine" "eugene-lab-vm" {
   size                  = "Standard_B1s"
   admin_username        = "eugenechia"
   network_interface_ids = [azurerm_network_interface.eugene-lab-nic.id]
+
+  custom_data = filebase64("customdata.tpl")
+
+  admin_ssh_key {
+    username   = "eugenechia"
+    public_key = file("~/.ssh/eugene-lab-azurekey.pub")
+  }
 
   os_disk {
     caching              = "ReadWrite"
