@@ -122,4 +122,22 @@ resource "azurerm_linux_virtual_machine" "eugene-lab-vm" {
     sku       = "18.04-LTS"
     version   = "latest"
   }
+
+  provisioner "local-exec" {
+    command = templatefile("${var.host_os}-ssh-config.tpl", {
+      hostname     = self.public_ip_address,
+      user         = "eugenechia"
+      identityfile = "~/.ssh/eugene-lab-azurekey"
+    })
+    interpreter = ["bash", "-c"]
+  }
+
+  tags = {
+    environment = "dev"
+  }
+}
+
+data "azurerm_public_ip" "eugene-lab-data" {
+  name                = azurerm_public_ip.eugene-lab-publicip.name
+  resource_group_name = azurerm_resource_group.tf-rg.name
 }
