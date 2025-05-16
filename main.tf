@@ -123,14 +123,14 @@ resource "azurerm_linux_virtual_machine" "tf-test-vm" {
     version   = "latest"
   }
 
-  provisioner "local-exec" {
+ /*/ provisioner "local-exec" {
     command = templatefile("${var.host_os}-ssh-config.tpl", {
       hostname     = self.public_ip_address,
       user         = "eugenechia"
       identityfile = "geneazurelab"
     })
     interpreter = ["bash", "-c"]
-  }
+  } */
 
   tags = {
     environment = "dev"
