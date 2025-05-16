@@ -70,8 +70,8 @@ resource "azurerm_subnet_network_security_group_association" "tf-test-sga" {
 
 resource "azurerm_public_ip" "tf-test-publicip" {
   name                = "acceptanceTestPublicIp1"
-  resource_group_name = azurerm_resource_group.tf-test.name
-  location            = azurerm_resource_group.tf-test.location
+  resource_group_name = azurerm_resource_group.tf-test-rg.name
+  location            = azurerm_resource_group.tf-test-rg.location
   allocation_method   = "Static"
 
   tags = {
@@ -108,7 +108,7 @@ resource "azurerm_linux_virtual_machine" "tf-test-vm" {
 
   admin_ssh_key {
     username   = "eugenechia"
-    public_key = file("~/.ssh/eugene-lab-azurekey.pub")
+    public_key = file("geneazurelab.pub")
   }
 
   os_disk {
@@ -127,7 +127,7 @@ resource "azurerm_linux_virtual_machine" "tf-test-vm" {
     command = templatefile("${var.host_os}-ssh-config.tpl", {
       hostname     = self.public_ip_address,
       user         = "eugenechia"
-      identityfile = "~/.ssh/eugene-lab-azurekey"
+      identityfile = "geneazurelab"
     })
     interpreter = ["bash", "-c"]
   }
